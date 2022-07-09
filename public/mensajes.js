@@ -1,4 +1,3 @@
-// const {options2} = require('./knexConfig');
 const fs = require('fs');
 const normalizr = require("normalizr");
 const normalize = normalizr.normalize;
@@ -7,47 +6,32 @@ const schema = normalizr.schema;
 module.exports = class Mensajeria{
     constructor(archivo){
         this.archivo = archivo;
-        
-
     }
     async obtenerTodos (){
         try {
 
+        let leido2 = await fs.promises.readFile(this.archivo);
 
+            let stringed2 = leido2.toString('utf8');
+            let parseado2 = JSON.parse(stringed2);
 
-        const content = await fs.promises.readFile(this.archivo);
-        let stringed = content.toString('utf8');
-        let parseado = JSON.parse(stringed);
+            const authorSchema = new schema.Entity('authors', {}, {idAttribute: 'email'});
 
-          
-
-          const authorSchema = new schema.Entity('authors',{idAttribute: 'email'});
-
-          const mensajeSchema = new schema.Entity('texts', {
-            author: authorSchema
-          });
-          
-
-          const util = require('util')
-          
-          function print(objeto) {
-            console.log(util.inspect(objeto, false, 12, true))
-          }
-          
-          print(parseado)
-          console.log(JSON.stringify(parseado).length)
-          
-          
-          const normalizedData = normalize(parseado, [parseado]);
-          print(normalizedData)
-          console.log(JSON.stringify(normalizedData).length)
-          
-
-          const denormalizedData = denormalize(normalizedData.result, [parseado], normalizedData.entities);
-          print(denormalizedData)
-          console.log(JSON.stringify(denormalizedData).length)
-          
-
+            const mensajesSchema = new schema.Entity('texts', {
+              author: authorSchema
+            });
+  
+            const mensajeriaSchema = new schema.Entity('mensajeria', {
+              mensajes: [mensajesSchema],
+              author: authorSchema
+            })
+            
+  
+            
+            const denormalizedData = denormalize(parseado2.result, mensajeriaSchema, parseado2.entities);
+            const objetivo1 = JSON.stringify(denormalizedData);
+            const objetivo2 = JSON.parse(objetivo1);
+            return objetivo2.mensajes;
 
         } catch (error) {
             console.log(`fallo la operacion obtenerTodos: ${error.message}`)
@@ -55,12 +39,30 @@ module.exports = class Mensajeria{
     }
     async insertarMensajesIndividuales(objeto){
         try {
-            let leido = await fs.promises.readFile(this.archivo);
-            let stringed = leido.toString('utf8');
-            let parseado = JSON.parse(stringed);
-            parseado.push(objeto);
-            let stringeado = JSON.stringify(parseado);
-            await fs.promises.writeFile(this.archivo, JSON.stringify(parseado), 'utf-8');
+            let leido2 = await fs.promises.readFile(this.archivo);
+            let stringed2 = leido2.toString('utf8');
+            let parseado2 = JSON.parse(stringed2);
+
+            const authorSchema = new schema.Entity('authors', {}, {idAttribute: 'email'});
+
+            const mensajesSchema = new schema.Entity('texts', {
+              author: authorSchema
+            });
+  
+            const mensajeriaSchema = new schema.Entity('mensajeria', {
+              mensajes: [mensajesSchema],
+              author: authorSchema
+            })
+
+            const denormalizedData = denormalize(parseado2.result, mensajeriaSchema, parseado2.entities);
+            const objetivo1 = JSON.stringify(denormalizedData);
+            const objetivo2 = JSON.parse(objetivo1);
+            
+            objetivo2.mensajes.push(objeto);
+            const normalizedData = normalize(objetivo2, mensajeriaSchema);
+            console.log('-------------------------------')
+
+            await fs.promises.writeFile(this.archivo, JSON.stringify(normalizedData), 'utf-8');
 
         } catch (error) {
             console.log(`fallo la operacion insertarMensajesIndividuales: ${error.message}`)

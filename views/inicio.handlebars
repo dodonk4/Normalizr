@@ -28,11 +28,16 @@
     <br>
   <div> 
       <label>CHAT</label><br>
-      <input type="text" placeholder="E-mail" id="mail">
+      <input type="text" placeholder="E-mail" id="mail"><br>
+      <input type="text" placeholder="Nombre" id="nombreDeUsuario"><br>
+      <input type="text" placeholder="Apellido" id="apellidoDeUsuario"><br>
+      <input type="number" placeholder="Edad" id="edadDeUsuario"><br>
+      <input type="text" placeholder="Alias" id="aliasDeUsuario"><br>
+      <input type="text" placeholder="Avatar" id="avatarDeUsuario"><br>
       <input type="button" value="Log In" id="logearse">
       <ul id="contenedorDeMensajes">
           {{#each mensajes}}
-            <li><p class="azulNegrita" style="color: blue; font-weight: bold; display: inline-block;">{{email}}</p> <p id="normalMarron" style="color: brown; display: inline-block;">{{date}}</p> <p id="italicVerde" style="color: green; font-style: italic; display: inline-block;" >{{msssj}}</p></li>
+            <li><p class="azulNegrita" style="color: blue; font-weight: bold; display: inline-block;">{{author.email}}</p> <p id="normalMarron" style="color: brown; display: inline-block;">{{author.name}}</p> <p id="italicVerde" style="color: green; font-style: italic; display: inline-block;" >{{text}}</p></li>
             
           {{/each}}
       </ul>

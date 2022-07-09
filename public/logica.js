@@ -38,6 +38,8 @@ butto.addEventListener('click', event =>{
     
 })
 
+
+
 socket.on('prod', function(data){
     console.log("socket de logica");
     const newProduct = document.createElement('li');

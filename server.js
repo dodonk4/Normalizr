@@ -7,9 +7,7 @@ const Contenedor = require('./public/productos');
 const Mensajeria = require('./public/mensajes');
 const tablero = require('./public/tablaFaker');
 
-
 const caja = new Contenedor();
-const mensajeria = new Mensajeria('./public/mensajes.txt');
 const mensajeriaANormalizar = new Mensajeria('./public/mensajesANormalizar.txt');
 
 const app = express();
@@ -26,28 +24,20 @@ app.use(express.static('public'));
 
 httpServer.listen(port, () => console.log(`App listening to port ${port}`));
 
-
-
-
-
-
 app.get('/', async (req, res) => {
 
     
     await caja.crearTabla();
-    // await mensajeria.crearTabla();
-    // await caja.insertarProductos(); //USAR PARA LLENAR LA TABLA VACÍA UNA VEZ Y LUEGO COMENTARLO
-    // await mensajeria.insertarMensajes(); //USAR PARA LLENAR LA TABLA VACÍA UNA VEZ Y LUEGO COMENTARLO
     let productos = await caja.obtenerTodos();
-    let mensajes = await mensajeria.obtenerTodos();
+    let mensajes = await mensajeriaANormalizar.obtenerTodos();
+    console.log(await mensajes);
     res.render('inicio', await { titulo: 'PRODUCTO', titulo2: 'PRECIO', titulo3: 'THUMBNAIL', productos, mensajes});
     
     
 });
 
 app.get('/api/productos-test', async (req, res) => {
-    // await tablero();
-    res.send(await mensajeriaANormalizar.obtenerTodos());
+    res.send(await tablero());
 }
 
 )
@@ -65,7 +55,7 @@ io.on('connection', async (socket)=>{
 
     socket.on('mensaje', async(data)=>{
         console.log('socket funcionando')
-        await mensajeria.insertarMensajesIndividuales(data);
+        await mensajeriaANormalizar.insertarMensajesIndividuales(data.cosa2);
         io.sockets.emit('mensaje', data);
 
     })
